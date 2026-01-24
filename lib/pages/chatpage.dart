@@ -1,19 +1,21 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 
 //Create Sample messages
 List<Map<String, String>> messages = [
   {
-    "mesasge": "hello world",
+    "message": "hello world",
     "createdTime": "19:07",
     "user": "Alice",
   },
   {
-    "mesasge": "hello alice",
+    "message": "hello alice",
     "createdTime": "19:07",
     "user": "me",
   },
   {
-    "mesasge": "hello mon",
+    "message": "hello mon",
     "createdTime": "19:07",
     "user": "Jack",
   },
@@ -40,6 +42,7 @@ class ChatPage extends StatelessWidget {
           //message area
           Expanded(
               child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             color: Colors.grey.shade300,
             child: ListView.builder(
                 itemCount: messages.length,
@@ -106,8 +109,35 @@ class ChatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [Text("${msg["mesasge"]}")],
+    final createdAt = msg["createdTime"];
+    final username = msg["user"];
+    final isUser = (username == "me") ? true : false;
+    final content = msg["message"];
+    return Align(
+      alignment: (!isUser) ? Alignment.centerRight : Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment:
+            (!isUser) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          //time
+          Text(
+            "$username",
+            style: TextStyle(fontSize: 12),
+          ),
+          //message
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Text(
+              "$content",
+              style: TextStyle(fontSize: 21),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
