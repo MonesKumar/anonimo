@@ -18,7 +18,7 @@ class StoreService {
     }
     await db.collection("messages").add({
       "content": content,
-      "userName": userName,
+      "userName": userName.toString(),
       "createdAt": createdAt,
       "expiresAt": expiresAt
     });

@@ -1,28 +1,18 @@
 import 'dart:html';
-
+import 'package:chatroom/pages/userpage.dart';
+import 'package:chatroom/services/auth_service.dart';
+import 'package:chatroom/services/store_service.dart';
 import 'package:flutter/material.dart';
 
-//Create Sample messages
-List<Map<String, String>> messages = [
-  {
-    "message": "hello world",
-    "createdTime": "19:07",
-    "user": "Alice",
-  },
-  {
-    "message": "hello alice",
-    "createdTime": "19:07",
-    "user": "me",
-  },
-  {
-    "message": "hello mon",
-    "createdTime": "19:07",
-    "user": "Jack",
-  },
-];
+final _authservice = AuthServices();
+final _storeservice = StoreService();
+
+List<Map<String, String>> messages = [];
 
 class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
+  ChatPage({super.key});
+
+  TextEditingController? MessageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +22,7 @@ class ChatPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         centerTitle: true,
-        titleTextStyle: TextStyle(fontSize: 72, color: Colors.white54),
+        titleTextStyle: const TextStyle(fontSize: 72, color: Colors.white54),
         title: const Text(
           "anonimo",
         ),
@@ -42,7 +32,7 @@ class ChatPage extends StatelessWidget {
           //message area
           Expanded(
               child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             color: Colors.grey.shade300,
             child: ListView.builder(
                 itemCount: messages.length,
@@ -62,13 +52,14 @@ class ChatPage extends StatelessWidget {
                     child: Material(
                       elevation: 9,
                       color: Colors.white.withOpacity(0.9),
-                      surfaceTintColor: Colors.transparent, // 🔥 FIX
+                      surfaceTintColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24),
                       ),
                       clipBehavior: Clip.antiAlias,
-                      child: const TextField(
-                        decoration: InputDecoration(
+                      child: TextField(
+                        controller: MessageController,
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: "type a message!",
                           contentPadding: EdgeInsets.symmetric(
@@ -85,12 +76,15 @@ class ChatPage extends StatelessWidget {
                   Material(
                     elevation: 9,
                     color: Colors.white.withOpacity(0.9),
-                    shape: CircleBorder(),
+                    shape: const CircleBorder(),
                     clipBehavior: Clip.antiAlias,
                     child: Padding(
                       padding: const EdgeInsets.all(8),
-                      child:
-                          IconButton(onPressed: () {}, icon: Icon(Icons.send)),
+                      child: IconButton(
+                          onPressed: () => _storeservice.sendMessage(
+                              content: MessageController!.text,
+                              userName: _authservice.user),
+                          icon: const Icon(Icons.send)),
                     ),
                   )
                 ],

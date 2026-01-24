@@ -1,3 +1,4 @@
+import 'package:chatroom/pages/chatpage.dart';
 import 'package:chatroom/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,10 +24,7 @@ class Wrapper extends StatelessWidget {
           } else if (snapshot.data == null) {
             return UserPage();
           } else {
-            return IconButton(
-              icon: const Icon(Icons.exit_to_app_outlined),
-              onPressed: authservice.signOut,
-            );
+            return ChatPage();
           }
         });
   }

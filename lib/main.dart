@@ -22,8 +22,8 @@ void main(List<String> args) async {
     ),
   );
   await userAuth.setPersistence(Persistence.SESSION);
-  runApp(const MaterialApp(
+  runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: ChatPage(),
+    home: Wrapper(),
   ));
 }

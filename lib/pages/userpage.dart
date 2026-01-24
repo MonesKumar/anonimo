@@ -77,7 +77,8 @@ class UserPage extends StatelessWidget {
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5))),
-                        onPressed: authservice.signInAnon,
+                        onPressed: () =>
+                            authservice.signInAnon(userName: userName.text),
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 18, horizontal: 10),
