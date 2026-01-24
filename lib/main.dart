@@ -1,4 +1,5 @@
-import 'package:chatroom/pages/chatpage.dart';
+import 'package:provider/provider.dart';
+import 'services/userSession.dart';
 import 'package:chatroom/wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,11 @@ void main(List<String> args) async {
     ),
   );
   await userAuth.setPersistence(Persistence.SESSION);
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: Wrapper(),
+  runApp(ChangeNotifierProvider(
+    create: (_) => UserSession(),
+    child: MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Wrapper(),
+    ),
   ));
 }

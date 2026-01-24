@@ -1,5 +1,6 @@
 import 'dart:html';
-import 'package:chatroom/pages/userpage.dart';
+import 'package:chatroom/services/userSession.dart';
+import 'package:provider/provider.dart';
 import 'package:chatroom/services/auth_service.dart';
 import 'package:chatroom/services/store_service.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +84,7 @@ class ChatPage extends StatelessWidget {
                       child: IconButton(
                           onPressed: () => _storeservice.sendMessage(
                               content: MessageController!.text,
-                              userName: _authservice.user),
+                              userName: context.read<UserSession>().userName),
                           icon: const Icon(Icons.send)),
                     ),
                   )

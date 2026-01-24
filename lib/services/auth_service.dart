@@ -1,13 +1,15 @@
+import 'package:chatroom/services/userSession.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 FirebaseAuth _userAuth = FirebaseAuth.instance;
 
-String? AuthName;
-
 class AuthServices {
-  Future<void> signInAnon({required String userName}) async {
+  Future<void> signInAnon(
+      {required BuildContext context, required String username}) async {
+    context.read<UserSession>().setUserName(username);
     await _userAuth.signInAnonymously();
-    AuthName = userName;
   }
 
   Future<void> signOut() async {
