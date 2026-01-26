@@ -16,5 +16,10 @@ class AuthServices {
     await _userAuth.signOut();
   }
 
+  String? getUserID() {
+    User? current_user = _userAuth.currentUser;
+    return current_user!.uid;
+  }
+
   User? get user => _userAuth.currentUser;
 }

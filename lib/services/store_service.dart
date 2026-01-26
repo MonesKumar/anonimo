@@ -4,12 +4,15 @@ FirebaseFirestore db = FirebaseFirestore.instance;
 
 class StoreService {
   Stream<QuerySnapshot> messagesStream() {
-    final Stream<QuerySnapshot> messages =
-        db.collection("messages").snapshots();
+    final Stream<QuerySnapshot> messages = db
+        .collection("messages")
+        .orderBy("createdAt", descending: false)
+        .snapshots();
     return messages;
   }
 
-  Future<void> sendMessage({required String content, required userName}) async {
+  Future<void> sendMessage(
+      {required String content, required userName, required userID}) async {
     final createdAt = DateTime.now();
     final expiresAt =
         Timestamp.fromDate(createdAt.add(const Duration(hours: 1)));
@@ -17,6 +20,7 @@ class StoreService {
       return;
     }
     await db.collection("messages").add({
+      "userID": userID,
       "content": content,
       "userName": userName.toString(),
       "createdAt": createdAt,

@@ -7,15 +7,30 @@ import 'package:flutter/material.dart';
 
 final _authservice = AuthServices();
 final _storeservice = StoreService();
+ScrollController _scrollController = ScrollController();
+FocusNode _focus = FocusNode();
 
 List<Map<String, String>> messages = [];
 
 StoreService _storeService = StoreService();
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   ChatPage({super.key});
 
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   TextEditingController? MessageController = TextEditingController();
+
+  Future<void> sendMessage() async {
+    await _storeService.sendMessage(
+        content: MessageController!.text,
+        userName: context.read<UserSession>().userName,
+        userID: _authservice.getUserID());
+    MessageController!.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +43,13 @@ class ChatPage extends StatelessWidget {
         titleTextStyle: const TextStyle(fontSize: 72, color: Colors.white54),
         title: const Text(
           "anonimo",
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.exit_to_app,
+            color: Colors.white,
+          ),
+          onPressed: _authservice.signOut,
         ),
       ),
       body: Column(
@@ -54,7 +76,16 @@ class ChatPage extends StatelessWidget {
                         );
                       }
                       final messages = snapshot.data!.docs;
+                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                        //Widget is rendered
+                        if (_scrollController.hasClients) {
+                          //ensures scrollController is connected to a scorllabel widget
+                          _scrollController.jumpTo(
+                              _scrollController.position.maxScrollExtent);
+                        }
+                      });
                       return ListView.builder(
+                        controller: _scrollController,
                         itemCount: messages.length,
                         itemBuilder: (context, index) =>
                             ChatCard(msg: messages[index]),
@@ -78,6 +109,10 @@ class ChatPage extends StatelessWidget {
                       clipBehavior: Clip.antiAlias,
                       child: TextField(
                         controller: MessageController,
+                        focusNode: _focus,
+                        onSubmitted: (_) {
+                          sendMessage();
+                        },
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: "type a message!",
@@ -100,10 +135,7 @@ class ChatPage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: IconButton(
-                          onPressed: () => _storeservice.sendMessage(
-                              content: MessageController!.text,
-                              userName: context.read<UserSession>().userName),
-                          icon: const Icon(Icons.send)),
+                          onPressed: sendMessage, icon: const Icon(Icons.send)),
                     ),
                   )
                 ],
@@ -118,17 +150,15 @@ class ChatPage extends StatelessWidget {
 
 class ChatCard extends StatelessWidget {
   final msg;
-  ChatCard({super.key, required this.msg});
+  const ChatCard({super.key, required this.msg});
 
   @override
   Widget build(BuildContext context) {
-    // final createdAt = msg["createdAt"];
-    // final username = msg["user"];
-    // final isUser = (username == "me") ? true : false;
-    // final content = msg["content"];
     final current_username = context.read<UserSession>().userName;
     final username = msg["userName"];
-    bool isUser = (current_username == username) ? true : false;
+    final current_userID = _authservice.getUserID();
+    final userID = msg["userID"];
+    bool isUser = (userID == current_userID) ? false : true;
     final content = msg["content"];
     final sentTime = msg["createdAt"];
 
@@ -143,6 +173,9 @@ class ChatCard extends StatelessWidget {
             "$username",
             style: const TextStyle(fontSize: 12),
           ),
+          const SizedBox(
+            height: 4,
+          ),
           //message
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -154,6 +187,9 @@ class ChatCard extends StatelessWidget {
               "$content",
               style: const TextStyle(fontSize: 21),
             ),
+          ),
+          const SizedBox(
+            height: 8,
           )
         ],
       ),
