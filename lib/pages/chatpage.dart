@@ -10,6 +10,8 @@ final _storeservice = StoreService();
 
 List<Map<String, String>> messages = [];
 
+StoreService _storeService = StoreService();
+
 class ChatPage extends StatelessWidget {
   ChatPage({super.key});
 
@@ -33,16 +35,32 @@ class ChatPage extends StatelessWidget {
           //message area
           Expanded(
               child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            color: Colors.grey.shade300,
-            child: ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return ChatCard(
-                    msg: messages[index],
-                  );
-                }),
-          )),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  color: Colors.grey.shade300,
+                  child: StreamBuilder(
+                    stream: _storeService.messagesStream(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (!snapshot.hasData) {
+                        return const Center(
+                          child: Text(
+                            "No messages right now !\nStart chatting",
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                      }
+                      final messages = snapshot.data!.docs;
+                      return ListView.builder(
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) =>
+                            ChatCard(msg: messages[index]),
+                      );
+                    },
+                  ))),
           Theme(
             data: Theme.of(context).copyWith(useMaterial3: false),
             child: Padding(
@@ -99,15 +117,21 @@ class ChatPage extends StatelessWidget {
 }
 
 class ChatCard extends StatelessWidget {
-  final Map msg;
+  final msg;
   ChatCard({super.key, required this.msg});
 
   @override
   Widget build(BuildContext context) {
-    final createdAt = msg["createdTime"];
-    final username = msg["user"];
-    final isUser = (username == "me") ? true : false;
-    final content = msg["message"];
+    // final createdAt = msg["createdAt"];
+    // final username = msg["user"];
+    // final isUser = (username == "me") ? true : false;
+    // final content = msg["content"];
+    final current_username = context.read<UserSession>().userName;
+    final username = msg["userName"];
+    bool isUser = (current_username == username) ? true : false;
+    final content = msg["content"];
+    final sentTime = msg["createdAt"];
+
     return Align(
       alignment: (!isUser) ? Alignment.centerRight : Alignment.centerLeft,
       child: Column(
@@ -117,18 +141,18 @@ class ChatCard extends StatelessWidget {
           //time
           Text(
             "$username",
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
           ),
           //message
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(24),
             ),
             child: Text(
               "$content",
-              style: TextStyle(fontSize: 21),
+              style: const TextStyle(fontSize: 21),
             ),
           )
         ],
