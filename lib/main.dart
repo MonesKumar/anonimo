@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'services/userSession.dart';
 import 'package:chatroom/wrapper.dart';
@@ -12,14 +13,27 @@ FirebaseAuth userAuth = FirebaseAuth.instance;
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+  final String apiKey = dotenv.env['API_KEY'] ?? "No api key";
+  final String authDomain = dotenv.env['authDomain'] ?? 'No authDomain';
+  final String projectId = dotenv.env['projectId'] ?? 'No projectID';
+
+  final String storageBucket =
+      dotenv.env['storageBucket'] ?? 'No StorageBucket';
+
+  final String messagingSenderId =
+      dotenv.env['messagingSenderId'] ?? 'No messagingSenderID';
+
+  final String appId = dotenv.env['appId'] ?? 'No appID';
+
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyDpWUqEAGuJfVKFgCnXLvPCLym4XxcyMVo",
-      authDomain: "web-based-chatapp.firebaseapp.com",
-      projectId: "web-based-chatapp",
-      storageBucket: "web-based-chatapp.firebasestorage.app",
-      messagingSenderId: "320957310758",
-      appId: "1:320957310758:web:0cfc9962768ae9ac5683e7",
+    options: FirebaseOptions(
+      apiKey: apiKey,
+      authDomain: authDomain,
+      projectId: projectId,
+      storageBucket: storageBucket,
+      messagingSenderId: messagingSenderId,
+      appId: appId,
     ),
   );
   await userAuth.setPersistence(Persistence.SESSION);
