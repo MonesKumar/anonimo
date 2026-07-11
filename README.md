@@ -1,16 +1,15 @@
-# chatroom
+# Anonimo
 
-A new Flutter project.
+A basic chatroom web app developed on the layer of anonymity of users.
 
-## Getting Started
+## About App
 
-This project is a starting point for a Flutter application.
+Anonimo is an web app developed through flutter and firebase. It uses flutter for clean and basic UI
+rendering, firebase for realtime chat updates and hosting the app. 
 
-A few resources to get you started if this is your first Flutter project:
+The primary focus of the app is to give user the experience of anonymity and the freedom to chat.
+This app features anonymous login which allows the user to jump into the chat ASAP.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This app is built for educational and fun purposes. 
+It only allows chatting functionality and prevents the user to send any media to prevent the 
+distribution of NSFW content.
